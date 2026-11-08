@@ -85,7 +85,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Todos os CDs (247.693 vols)
+              Todos os CDs
             </button>
             {availableCDs.map((cd) => (
               <button
