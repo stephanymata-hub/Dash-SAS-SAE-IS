@@ -144,41 +144,43 @@ export function parsePlanningRows(rawRows: unknown[][]): ParseResult {
   let volumetriaIdx = 36;
   let percentualIdx = 58;
 
-  // Check if first row contains headers
-  const firstRow = rawRows[0] || [];
-  let headerRowIndex = -1;
+  // Locate the actual header row and map fields by the published sheet's column names.
+  let headerRowIndex = rawRows.findIndex((row) =>
+    Array.isArray(row) && row.some((cell) => normalizeStr(String(cell ?? '')) === 'status_plan')
+      && row.some((cell) => normalizeStr(String(cell ?? '')).includes('ordem venda'))
+  );
+  if (headerRowIndex < 0) {
+    headerRowIndex = rawRows.findIndex((row) =>
+      Array.isArray(row) && row.some((cell) => normalizeStr(String(cell ?? '')).includes('origem'))
+        && row.some((cell) => normalizeStr(String(cell ?? '')).includes('marca'))
+    );
+  }
 
-  for (let r = 0; r < Math.min(5, rawRows.length); r++) {
-    const row = rawRows[r];
-    if (!Array.isArray(row)) continue;
+  let origemIdx = 4;
+  let marcaIdx = 5;
+  let colunaLIdx = 11;
+  let tipoPedidoIdx = 10;
+  let rotaIdx = 24;
+  let volumetriaIdx = 36;
+  let percentualIdx = 58;
+  let pedidoIdx = 1;
+  let observacaoIdx = 25;
 
-    let matchCount = 0;
-    row.forEach((cell, idx) => {
-      const text = normalizeStr(String(cell || ''));
-      if (text.includes('origem') || text.includes('cd')) matchCount++;
-      if (text.includes('marca')) matchCount++;
-      if (text === 'l' || text.includes('lv') || text.includes('corte')) matchCount++;
-      if (text.includes('tipo') || text.includes('modalidade')) matchCount++;
-      if (text.includes('rota')) matchCount++;
-      if (text.includes('volume') || text.includes('volumetria')) matchCount++;
-      if (text.includes('linha vermelha') || text.includes('pronto') || text.includes('%')) matchCount++;
-    });
-
-    if (matchCount >= 2) {
-      headerRowIndex = r;
-      // Map discovered columns by header text
-      row.forEach((cell, idx) => {
-        const text = normalizeStr(String(cell || ''));
-        if ((text.includes('origem') || text === 'cd') && !text.includes('destino')) origemIdx = idx;
-        else if (text.includes('marca')) marcaIdx = idx;
-        else if (text === 'l' || text === 'lv' || (text.includes('linha') && !text.includes('pronto') && !text.includes('%'))) colunaLIdx = idx;
-        else if (text.includes('tipo') || text.includes('modalidade') || text.includes('natureza')) tipoPedidoIdx = idx;
-        else if (text.includes('rota') || text === 'itinerario') rotaIdx = idx;
-        else if (text.includes('volumetria') || text === 'volume' || text.includes('qtd')) volumetriaIdx = idx;
-        else if (text.includes('pronto') || text.includes('% pronto') || text.includes('bg')) percentualIdx = idx;
-      });
-      break;
-    }
+  if (headerRowIndex >= 0) {
+    const headers = rawRows[headerRowIndex].map((cell) => normalizeStr(String(cell ?? '')));
+    const findHeader = (predicate: (value: string) => boolean, fallback: number) => {
+      const index = headers.findIndex(predicate);
+      return index >= 0 ? index : fallback;
+    };
+    origemIdx = findHeader((value) => value === 'origem' || value === 'cd/origem', origemIdx);
+    marcaIdx = findHeader((value) => value === 'marca', marcaIdx);
+    colunaLIdx = findHeader((value) => value === 'linha vermelha' || value === 'l', colunaLIdx);
+    tipoPedidoIdx = findHeader((value) => value === 'tipo_pedido' || value === 'tipo pedido', tipoPedidoIdx);
+    rotaIdx = findHeader((value) => value === 'rota', rotaIdx);
+    volumetriaIdx = findHeader((value) => value === 'volume' || value === 'volumetria', volumetriaIdx);
+    percentualIdx = findHeader((value) => value.includes('% linha vermelha'), percentualIdx);
+    pedidoIdx = findHeader((value) => value === 'ordem venda' || value === 'pedido', pedidoIdx);
+    observacaoIdx = findHeader((value) => value === 'observacao' || value === 'observação', observacaoIdx);
   }
 
   const startRow = headerRowIndex >= 0 ? headerRowIndex + 1 : 0;
@@ -231,7 +233,7 @@ export function parsePlanningRows(rawRows: unknown[][]): ParseResult {
 
     parsedRows.push({
       id: `row-${r}-${Date.now()}`,
-      pedido: row[0] ? String(row[0]).trim() : `PED-${r + 1000}`,
+      pedido: row[pedidoIdx] !== undefined && row[pedidoIdx] !== null ? String(row[pedidoIdx]).trim() : `PED-${r + 1000}`,
       tipoPedido,
       cd,
       marca,
@@ -243,11 +245,11 @@ export function parsePlanningRows(rawRows: unknown[][]): ParseResult {
       percentualLinhaVermelha,
       volumeLinhaVermelhaPronto,
       status,
-      observacao: isLinhaVermelha
+      observacao: (observacaoIdx >= 0 && row[observacaoIdx] ? String(row[observacaoIdx]).trim() : '') || (isLinhaVermelha
         ? `Linha Vermelha ${colunaL} (Coluna L) · ${percentualLinhaVermelha}% pronto`
         : isRoteirizado
         ? 'Roteirizado (Sem Linha Vermelha na Coluna L)'
-        : 'Coluna Y vazia ou 0 - a roteirizar'
+        : 'Coluna Y vazia ou 0 - a roteirizar')
     });
   }
 
