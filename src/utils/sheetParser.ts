@@ -136,14 +136,6 @@ export function parsePlanningRows(rawRows: unknown[][]): ParseResult {
   // Coluna Y -> index 24
   // Coluna AK -> index 36
   // Coluna BG -> index 58
-  let origemIdx = 4;
-  let marcaIdx = 5;
-  let colunaLIdx = 11;
-  let tipoPedidoIdx = -1;
-  let rotaIdx = 24;
-  let volumetriaIdx = 36;
-  let percentualIdx = 58;
-
   // Locate the actual header row and map fields by the published sheet's column names.
   let headerRowIndex = rawRows.findIndex((row) =>
     Array.isArray(row) && row.some((cell) => normalizeStr(String(cell ?? '')) === 'status_plan')
