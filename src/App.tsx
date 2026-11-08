@@ -12,15 +12,13 @@ import { RouteLinhaVermelhaVisualizer } from './components/RouteLinhaVermelhaVis
 import { BrandBreakdownView } from './components/BrandBreakdownView';
 import { PlanningDataTable } from './components/PlanningDataTable';
 import { BloqueiosTab } from './components/BloqueiosTab';
-import { DataImportModal } from './components/DataImportModal';
-import { INITIAL_PLANNING_DATA, BLOQUEIOS_META_DATA, BLOQUEIOS_FUNIL_DATA } from './data/defaultData';
-import { FilterState, PlanningRow, TabType } from './types';
-import { Info, CheckCircle2 } from 'lucide-react';
+import { useGoogleSheetsData } from './hooks/useGoogleSheetsData';
+import { FilterState, TabType } from './types';
+import { Info, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export default function App() {
-  const [planningData, setPlanningData] = useState<PlanningRow[]>(INITIAL_PLANNING_DATA);
+  const { planningData, metaData, funilData, loading, error, updatedAt, refresh, hasData } = useGoogleSheetsData();
   const [activeTab, setActiveTab] = useState<TabType>('planejamento');
-  const [isImportModalOpen, setIsImportModalOpen] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<string | null>(null);
 
   // Filters State
@@ -115,19 +113,10 @@ export default function App() {
     });
   };
 
-  // Restore seed dataset
+  // Recarrega exclusivamente a fonte oficial publicada no Google Sheets.
   const handleResetData = () => {
-    setPlanningData(INITIAL_PLANNING_DATA);
+    void refresh();
     handleResetFilters();
-    triggerToast('Dados restaurados: Total Roteirizado 247.693 vols (Jundiaí: 125.615 · Itaitinga: 122.078 · São José: 0).');
-  };
-
-  // Handle new data loaded from modal (CSV, XLSX or paste)
-  const handleDataLoaded = (newData: PlanningRow[]) => {
-    setPlanningData(newData);
-    handleResetFilters();
-    const roteirizadosCount = newData.filter((r) => r.isRoteirizado).reduce((acc, r) => acc + r.volumetria, 0);
-    triggerToast(`${newData.length} linhas carregadas! Volumetria roteirizada: ${roteirizadosCount.toLocaleString('pt-BR')} vols.`);
   };
 
   const triggerToast = (msg: string) => {
@@ -185,12 +174,32 @@ export default function App() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenImportModal={() => setIsImportModalOpen(true)}
+        onOpenImportModal={handleResetData}
         onExportCsv={handleExportCsv}
         onResetData={handleResetData}
         totalRecords={planningData.length}
       />
 
+      <section className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className={`rounded-xl border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs ${error ? 'bg-rose-50 border-rose-200 text-rose-900' : loading ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'}`}>
+          <div className="flex items-center gap-2">
+            {error ? <AlertTriangle className="w-4 h-4" /> : loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+            <span className="font-semibold">{error ? 'Falha ao atualizar Google Sheets' : loading ? 'Sincronizando com Google Sheets…' : 'Fonte oficial: Google Sheets publicado'}</span>
+            {error && <span>{error}</span>}
+          </div>
+          <div className="flex items-center gap-3">
+            <span>{updatedAt ? `Última sincronização: ${new Date(updatedAt).toLocaleString('pt-BR')}` : 'Aguardando primeira sincronização'}</span>
+            <button onClick={() => void refresh()} className="font-semibold underline underline-offset-2">Atualizar agora</button>
+          </div>
+        </div>
+      </section>
+      {!hasData && (
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-sm text-slate-600">
+            {error ? 'O dashboard não exibirá dados locais ou antigos. Corrija o acesso à publicação e tente atualizar novamente.' : 'Carregando os dados publicados…'}
+          </div>
+        </div>
+      )}
       {/* Main Viewport */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Context Information Bar */}
@@ -216,19 +225,19 @@ export default function App() {
           <div className="flex items-center gap-2 self-start md:self-auto shrink-0 font-medium flex-wrap text-xs">
             <span className="text-slate-400">Total Roteirizado:</span>
             <span className="font-bold font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              247.693 vols
+              {planningData.filter((r) => r.isRoteirizado).reduce((sum, r) => sum + r.volumetria, 0).toLocaleString('pt-BR')} vols
             </span>
             <span className="text-slate-400">· Jundiaí:</span>
             <span className="font-bold font-mono text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">
-              125.615
+              {planningData.filter((r) => r.isRoteirizado && r.cd === 'Jundiai').reduce((sum, r) => sum + r.volumetria, 0).toLocaleString('pt-BR')}
             </span>
             <span className="text-slate-400">· Itaitinga:</span>
             <span className="font-bold font-mono text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">
-              122.078
+              {planningData.filter((r) => r.isRoteirizado && r.cd === 'Itaitinga').reduce((sum, r) => sum + r.volumetria, 0).toLocaleString('pt-BR')}
             </span>
             <span className="text-slate-400">· São José:</span>
             <span className="font-bold font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-              0 vols
+              {planningData.filter((r) => r.isRoteirizado && r.cd === 'Sao Jose').reduce((sum, r) => sum + r.volumetria, 0).toLocaleString('pt-BR')} vols
             </span>
           </div>
         </div>
@@ -306,8 +315,8 @@ export default function App() {
         {activeTab === 'bloqueios' && (
           <div className="space-y-6">
             <BloqueiosTab
-              metaData={BLOQUEIOS_META_DATA}
-              funilData={BLOQUEIOS_FUNIL_DATA}
+              metaData={metaData}
+              funilData={funilData}
             />
           </div>
         )}
@@ -343,12 +352,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Import Modal */}
-      <DataImportModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onDataLoaded={handleDataLoaded}
-      />
     </div>
   );
 }
