@@ -1,0 +1,28 @@
+Bloqueios - Meta,,,,,,,Bloqueios - Funil,,,
+ORIGEM,MARCA,STATUS_CAMPANHA,SUM de VOLUME,,,,MARCA,ORIGEM,OBSERVACAO,SUM de VOLUME
+Itaitinga,IS,Não Tem,73,,,,IS,Itaitinga,Bloqueada _ não digitar,10
+Itaitinga,SAE,Não Tem,5888,,,,IS,Itaitinga,Não encontrado,4
+Itaitinga,SAS,Não Tem,55662,,,,IS,Jundiai,Bloqueada _ não digitar,284
+Itaitinga Total,,,61623,,,,IS,Jundiai,Digitado e aguardando validação,292
+Jundiai,IS,,8,,,,IS,Jundiai,Escola NOK,159
+Jundiai,IS,Não Tem,2405,,,,IS,Jundiai,Não encontrado,136
+Jundiai,IS,Sem contrato assinado,126,,,,IS Total,,,885
+Jundiai,SAE,Não Tem,76077,,,,SAE,Jundiai,Bloqueada _ não digitar,2846
+Jundiai,SAS,Não Tem,173965,,,,SAE,Jundiai,Churn em ACV,119
+Jundiai Total,,,252581,,,,SAE,Jundiai,Digitado e aguardando validação,557
+Sao Jose,SAS,Não Tem,19,,,,SAE,Jundiai,Não encontrado,315
+Sao Jose Total,,,19,,,,SAE Total,,,3837
+Total geral,,,314223,,,,SAS,Itaitinga,Bloqueada _ não digitar,2304
+,,,,,,,SAS,Itaitinga,Digitado e aguardando validação,698
+,,,,,,,SAS,Itaitinga,Erro encontrado,20477
+,,,,,,,SAS,Itaitinga,Escola NOK,2657
+,,,,,,,SAS,Jundiai,Bloqueada _ não digitar,4683
+,,,,,,,SAS,Jundiai,Churn em ACV,2002
+,,,,,,,SAS,Jundiai,Digitado e aguardando validação,537
+,,,,,,,SAS,Jundiai,Erro encontrado,126618
+,,,,,,,SAS,Jundiai,Escola NOK,8326
+,,,,,,,SAS,Jundiai,Liberado para digitação,4530
+,,,,,,,SAS,Jundiai,Não encontrado,1674
+,,,,,,,SAS,Sao Jose,Não encontrado,19
+,,,,,,,SAS Total,,,174525
+,,,,,,,Total geral,,,179247

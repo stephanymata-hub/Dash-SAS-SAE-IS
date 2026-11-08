@@ -1,0 +1,6 @@
+{
+  "name": "Dashboard de Roteirização e Planejamento CD",
+  "description": "Painel de controle logístico de volumetria roteirizada por CD, Rota e Marca, com acompanhamento de Linha Vermelha e status de bloqueios.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
