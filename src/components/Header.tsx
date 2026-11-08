@@ -7,7 +7,6 @@ interface HeaderProps {
   setActiveTab: (tab: TabType) => void;
   onOpenImportModal: () => void;
   onExportCsv: () => void;
-  onResetData: () => void;
   totalRecords: number;
 }
 
@@ -16,7 +15,6 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onOpenImportModal,
   onExportCsv,
-  onResetData,
   totalRecords
 }) => {
   return (
