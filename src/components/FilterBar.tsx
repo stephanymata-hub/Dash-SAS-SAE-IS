@@ -98,11 +98,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 }`}
               >
                 {cd === 'Jundiai'
-                  ? 'Jundiaí (125.615)'
+                  ? 'Jundiaí'
                   : cd === 'Itaitinga'
-                  ? 'Itaitinga (122.078)'
+                  ? 'Itaitinga'
                   : cd === 'Sao Jose'
-                  ? 'São José (0 roteirizado)'
+                  ? 'São José'
                   : cd}
               </button>
             ))}
