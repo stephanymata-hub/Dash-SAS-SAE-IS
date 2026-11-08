@@ -176,7 +176,6 @@ export default function App() {
         setActiveTab={setActiveTab}
         onOpenImportModal={handleResetData}
         onExportCsv={handleExportCsv}
-        onResetData={handleResetData}
         totalRecords={planningData.length}
       />
 
