@@ -60,10 +60,10 @@ export const BloqueiosTab: React.FC<BloqueiosTabProps> = ({ metaData, funilData 
           </div>
           <div>
             <h4 className="text-sm font-bold text-amber-950">
-              Dados Extraídos da Planilha Anexa (Aba Bloqueios)
+              Dados sincronizados do Google Sheets
             </h4>
             <div className="text-xs text-amber-800">
-              Arquivo: <code className="font-mono text-[11px] bg-amber-100/60 px-1 py-0.5 rounded">SAE_e_IS_-_V1</code> · Total de Bloqueios registrados: 314.223 volumes
+              Aba Report Backlog · valores atualizados pela publicação oficial
             </div>
           </div>
         </div>
