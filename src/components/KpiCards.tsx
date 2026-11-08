@@ -64,9 +64,9 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ data, selectedCD, selectedMa
 
           <div className="font-mono tabular-nums text-xs font-semibold text-emerald-400">
             {isJundiai ? (
-              <span>Jundiaí: <strong>197 pedidos · 125.615 vols</strong> (LV: <strong>36 ped · 20.564 vols</strong>)</span>
+              <span>Jundiaí: <strong>{totalRoteirizadoPedidos} pedidos · {totalRoteirizadoVol.toLocaleString('pt-BR')} vols</strong></span>
             ) : selectedCD === 'TODOS' ? (
-              <span>Total: <strong>247.693 vols roteirizados</strong></span>
+              <span>Total: <strong>{totalRoteirizadoVol.toLocaleString('pt-BR')} vols roteirizados</strong></span>
             ) : (
               <span>CD {selectedCD}: <strong>{totalRoteirizadoVol.toLocaleString('pt-BR')} vols roteirizados</strong></span>
             )}
@@ -79,11 +79,11 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ data, selectedCD, selectedMa
             <div className="flex items-center gap-2">
               <PackageCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span className="text-slate-200">
-                <strong>Conferência Jundiaí:</strong> 197 pedidos roteirizados ({totalRoteirizadoVol.toLocaleString('pt-BR')} vols). Desses, <strong>36 pedidos</strong> são Linha Vermelha (Coluna L = 1, 2, 3 ou 4), somando exatamente <strong>20.564 volumes</strong>.
+                <strong>Conferência Jundiaí:</strong> {totalRoteirizadoPedidos} pedidos roteirizados ({totalRoteirizadoVol.toLocaleString('pt-BR')} vols). Desses, <strong>{totalLinhaVermelhaPedidos} pedidos</strong> são Linha Vermelha (Coluna L = 1, 2, 3 ou 4), somando <strong>{totalLinhaVermelhaVol.toLocaleString('pt-BR')} volumes</strong>.
               </span>
             </div>
             <span className="text-[11px] font-mono font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded whitespace-nowrap">
-              100% Validado
+              {totalRoteirizadoPedidos > 0 ? 'Calculado da fonte' : 'Sem dados'}
             </span>
           </div>
         )}
@@ -94,11 +94,11 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ data, selectedCD, selectedMa
             <div className="flex items-center gap-2">
               <PackageCheck className="w-4 h-4 text-amber-400 shrink-0" />
               <span className="text-slate-200">
-                <strong>Conferência CD São José:</strong> 0 pedidos roteirizados (Coluna Y vazia ou 0). Todos os pedidos estão na fila pendente / a roteirizar.
+                <strong>Conferência CD São José:</strong> {totalRoteirizadoPedidos.toLocaleString('pt-BR')} pedidos roteirizados, conforme a coluna de rota publicada.
               </span>
             </div>
             <span className="text-[11px] font-mono font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded whitespace-nowrap">
-              0 Roteirizado · Confirmado
+              {totalRoteirizadoPedidos.toLocaleString('pt-BR')} roteirizados
             </span>
           </div>
         )}

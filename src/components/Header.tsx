@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadCloud, Download, Sparkles, RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { TabType } from '../types';
 
 interface HeaderProps {
@@ -7,7 +7,6 @@ interface HeaderProps {
   setActiveTab: (tab: TabType) => void;
   onOpenImportModal: () => void;
   onExportCsv: () => void;
-  onResetData: () => void;
   totalRecords: number;
 }
 
@@ -16,7 +15,6 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onOpenImportModal,
   onExportCsv,
-  onResetData,
   totalRecords
 }) => {
   return (
@@ -85,8 +83,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Zone 3: Primary action button + Quick utilities */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
-              onClick={onResetData}
-              title="Restaurar dados padrão"
+              onClick={onOpenImportModal}
+              title="Sincronizar com Google Sheets"
               className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
             >
               <RefreshCw className="w-4 h-4" />
@@ -102,8 +100,8 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onOpenImportModal}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap"
             >
-              <UploadCloud className="w-4 h-4" />
-              <span>Importar / Ajustar CDs</span>
+              <RefreshCw className="w-4 h-4" />
+              <span>Atualizar Google Sheets</span>
             </button>
           </div>
         </div>
