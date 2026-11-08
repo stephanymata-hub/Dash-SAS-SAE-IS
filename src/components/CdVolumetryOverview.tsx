@@ -186,7 +186,7 @@ export const CdVolumetryOverview: React.FC<CdVolumetryOverviewProps> = ({
                   {isJundiai && (
                     <div className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>197 pedidos roteirizados · 125.615 vols confirmados</span>
+                      <span>{item.roteirizadoPedidos} pedidos roteirizados · {item.roteirizadoVol.toLocaleString('pt-BR')} vols</span>
                     </div>
                   )}
                   {item.cd === 'Sao Jose' && (
@@ -228,8 +228,8 @@ export const CdVolumetryOverview: React.FC<CdVolumetryOverviewProps> = ({
                   </div>
                   {isJundiai && (
                     <div className="text-[10px] text-rose-900 font-semibold pt-1 border-t border-rose-100 flex items-center justify-between">
-                      <span>36 pedidos de Linha Vermelha conferidos</span>
-                      <span className="font-mono">20.564 vols</span>
+                      <span>{item.linhaVermelhaPedidos} pedidos de Linha Vermelha</span>
+                      <span className="font-mono">{item.linhaVermelhaVol.toLocaleString('pt-BR')} vols</span>
                     </div>
                   )}
                 </div>
@@ -280,7 +280,7 @@ export const CdVolumetryOverview: React.FC<CdVolumetryOverviewProps> = ({
             </span>
           </div>
           <div className="text-xs text-slate-500 font-mono tabular-nums">
-            Jundiaí: <strong>125.615</strong> ({((125615 / totalGeralRoteirizado) * 100).toFixed(1)}%) · Itaitinga: <strong>114.240</strong> ({((114240 / totalGeralRoteirizado) * 100).toFixed(1)}%) · São José: <strong>7.838</strong> ({((7838 / totalGeralRoteirizado) * 100).toFixed(1)}%)
+            {cdStats.map((item) => `${item.displayName}: ${item.roteirizadoVol.toLocaleString('pt-BR')} (${(totalGeralRoteirizado > 0 ? item.roteirizadoVol / totalGeralRoteirizado * 100 : 0).toFixed(1)}%)`).join(' · ')}
           </div>
         </div>
 
@@ -288,18 +288,18 @@ export const CdVolumetryOverview: React.FC<CdVolumetryOverviewProps> = ({
         <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex">
           <div
             className="bg-slate-900 h-full"
-            style={{ width: `${(125615 / totalGeralRoteirizado) * 100}%` }}
-            title="Jundiaí: 125.615"
+            style={{ width: `${totalGeralRoteirizado > 0 ? cdStats[0].roteirizadoVol / totalGeralRoteirizado * 100 : 0}%` }}
+            title={`Jundiaí: ${cdStats[0].roteirizadoVol}`}
           />
           <div
             className="bg-indigo-600 h-full"
-            style={{ width: `${(114240 / totalGeralRoteirizado) * 100}%` }}
-            title="Itaitinga: 114.240"
+            style={{ width: `${totalGeralRoteirizado > 0 ? cdStats[1].roteirizadoVol / totalGeralRoteirizado * 100 : 0}%` }}
+            title={`Itaitinga: ${cdStats[1].roteirizadoVol}`}
           />
           <div
             className="bg-amber-500 h-full"
-            style={{ width: `${(7838 / totalGeralRoteirizado) * 100}%` }}
-            title="São José: 7.838"
+            style={{ width: `${totalGeralRoteirizado > 0 ? cdStats[2].roteirizadoVol / totalGeralRoteirizado * 100 : 0}%` }}
+            title={`São José: ${cdStats[2].roteirizadoVol}`}
           />
         </div>
       </div>
